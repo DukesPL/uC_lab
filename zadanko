@@ -1,0 +1,72 @@
+#include <aduc831.h> //plik naglówkowy
+
+unsigned int i = 0;
+
+void przerwanie_przycisku(void) interrupt 2
+{
+	TH0 = 0x00; // <--- wpisac wlasne opoznienie
+	TL0 = 0x00; // <--- wpisac wlasne opoznienie
+	P3 ^= (1<<0);
+}
+
+void przerwanie_timer0(void) interrupt 1
+{
+	if (P3 == 0xF7)
+		{
+			P3 ^= (1<<0);
+			i++;
+			if (i>4) i=0;
+		}	
+}
+
+void LED(unsigned int a)
+{	if (a == 0)
+	{
+	P2 = 0xFF;
+	}
+
+	if (a ==1)
+	{
+	P2 = 0xEF;
+	}
+
+
+	if (a == 2)
+	{
+	P2 = 0xCF;
+	}
+
+	
+	if (a == 3)
+	{
+	P2 = 0x8F;
+	}
+
+	if (a == 4)
+	{
+	P2 = 0x0F;
+	}
+	
+}
+
+int main(void)
+{
+		
+	TMOD = 0x01;
+	TH0 = 0x00; // <--- wpisac wlasne opoznienie
+	TL0 = 0x00; // <--- wpisac wlasne opoznienie
+	TR0 = 1;
+
+	IT1 = 1;
+	EX1 = 1;
+	ET0 = 1;
+	EA = 1;
+	
+	while(1)
+	{
+	
+	LED(i);		
+	}
+	
+	return 0;
+}
